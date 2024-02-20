@@ -9,6 +9,7 @@ import Textarea from "./Textarea/Textarea";
 import Select from "./Select/Select";
 import Logo from "./Logo";
 import Spinner from "./Sppiner/Sppiner";
+import Protected from "./Protact/Protected";
 
 export {
   Button,
@@ -22,4 +23,5 @@ export {
   Input,
   Logo,
   Spinner,
+  Protected,
 };
