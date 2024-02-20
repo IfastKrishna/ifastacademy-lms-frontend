@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import Logo from "../Logo";
 import { FaUser, FaChalkboardTeacher } from "react-icons/fa";
@@ -16,14 +16,19 @@ import Menu from "./Menu";
 import MenuWrapper from "./MenuWrapper";
 import SubMenu from "./SubMenu";
 import FlexBtween from "../FlexBetween/FlexBtween";
+import { useSelector } from "react-redux";
 
 function SideBar() {
   const isSmallDivise = useMediaQuery({ query: "(max-width:1024px)" });
   const [sideBarOpen, setSideBarOpen] = useState(false);
+  const authStatus = useSelector((state) => state.auth.isAuthenticated);
+  const user = useSelector((state) => state.auth.user);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!isSmallDivise) {
       setSideBarOpen(true);
+    } else {
+      setSideBarOpen(false);
     }
   }, [isSmallDivise]);
 
@@ -35,7 +40,7 @@ function SideBar() {
     <div className="relative flex flex-col lg:flex-row">
       {/* LARGE SCREEN FOR THIS SIDEBAR */}
       <div
-        className={`bg-gray-100 w-10/12 h-screen fixed z-20 top-0 left-0 lg:relative lg:w-72 px-5 border-r border-gray-200 ${
+        className={`bg-white w-10/12 h-screen fixed z-20 top-0 left-0 lg:relative lg:w-72 px-5 border-r border-gray-200 ${
           sideBarOpen
             ? "transition-transform duration-300 transform translate-x-0"
             : "transition-transform duration-300 transform -translate-x-full"
@@ -59,6 +64,9 @@ function SideBar() {
             <MenuWrapper className="flex flex-col gap-y-1">
               <Menu to="/">
                 <MdSpaceDashboard className="mr-3" /> Dashboard
+              </Menu>
+              <Menu to="/profile">
+                <MdSpaceDashboard className="mr-3" /> Profile
               </Menu>
               <Menu to="/course">
                 <MdSpaceDashboard className="mr-3" /> Course
@@ -92,7 +100,7 @@ function SideBar() {
       </div>
 
       {/* MOBILE DIVISE FOR NAVBAR */}
-      <div className="block fixed z-10 top-0 left-0 right-0 lg:hidden h-14 px-5 bg-gray-100 border-b border-gray-200 w-full">
+      <div className="block fixed z-10 top-0 left-0 right-0 lg:hidden h-14 px-5 bg-white border-b border-gray-200 w-full">
         <FlexBtween className="h-full px-5">
           <div className="flex items-center">
             <MdOutlineMenu
@@ -104,17 +112,33 @@ function SideBar() {
               <Logo />
             </Link>
           </div>
-          <img
-            src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            className=" w-10 h-10 rounded-full object-cover border-2 border-gray-300 hover:cursor-pointer"
-          />
+
+          {authStatus ? (
+            <img
+              src={user.avatar}
+              className=" w-10 h-10 rounded-full object-cover border-2 border-gray-300 hover:cursor-pointer"
+            />
+          ) : (
+            <Link
+              to="/login"
+              className=" bg-black/10 py-2 px-4 rounded-md font-bold duration-200 hover:shadow hover:bg-black/30  hover:text-gray-700"
+            >
+              Login
+            </Link>
+          )}
         </FlexBtween>
       </div>
 
       {/* Page */}
-      <div className="flex-1">
+      {/* <div className="flex-1"> */}
+      <div
+        className={`flex-1 bg-gray-100 ${
+          isSmallDivise ? "overflow-x-hidden" : "h-screen"
+        } overflow-auto`}
+      >
         <Outlet />
       </div>
+      {/* </div> */}
     </div>
   );
 }

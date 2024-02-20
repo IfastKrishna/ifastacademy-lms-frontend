@@ -5,7 +5,14 @@ import "./index.css";
 import store from "./store/store.js";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
-import { Dev, PageNotFound } from "./pages/index.js";
+import {
+  Dashbord,
+  Login,
+  PageNotFound,
+  SignUp,
+  Profile,
+} from "./pages/index.js";
+import { Protected } from "./components/index.js";
 
 const router = createBrowserRouter([
   {
@@ -14,8 +21,25 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Dev />,
+        element: <Dashbord />,
       },
+      {
+        path: "profile",
+        element: (
+          <Protected authentication>
+            <Profile />
+          </Protected>
+        ),
+      },
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "signup",
+        element: <SignUp />,
+      },
+
       {
         path: "*",
         element: <PageNotFound />,

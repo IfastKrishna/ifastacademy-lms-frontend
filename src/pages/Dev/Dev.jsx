@@ -15,19 +15,13 @@ function Dev() {
     });
 
   return (
-    <div
-      className={`w-full ${
-        isSmallDivise ? "overflow-x-hidden" : "h-screen"
-      } overflow-auto`}
-    >
-      <Signup />
-      <Login />
+    <>
       <div className="flex mb-5">
         <Button className="mx-auto" onClick={notify}>
           Alert
         </Button>
       </div>
-    </div>
+    </>
   );
 }
 

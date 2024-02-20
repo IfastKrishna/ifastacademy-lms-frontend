@@ -21,7 +21,7 @@ function Signup() {
 
   return (
     <div
-      className="max-w-xl mx-auto my-14
+      className="max-w-xl mx-auto
      lg:my-0 rounded-md py-4 px-5"
     >
       <form onSubmit={handleSubmit(create)}>

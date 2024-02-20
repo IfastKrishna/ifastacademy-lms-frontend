@@ -2,15 +2,19 @@ import React, { useState } from "react";
 import { Input, Button, Spinner } from "../../components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { login as authLogin } from "../../features/authSlice";
+import { conf } from "../../conf/conf";
+import axios from "axios";
 import toast from "react-hot-toast";
 
 function Login() {
   const [loading, setLoading] = useState(false);
   const [passwordShow, setPasswordShow] = useState(false);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -21,8 +25,30 @@ function Login() {
     setPasswordShow(!passwordShow);
   };
 
+  const handleError = (errorData) => {
+    const preContentRegex = /<pre>(.*?)<br>/s;
+    const match = errorData.match(preContentRegex);
+    if (match && match.length > 1) {
+      const preContent = match[1];
+      return preContent.trim().split(":")[1];
+    } else {
+      console.log("No <pre> tag content found");
+      return "";
+    }
+  };
+
   const login = async (values) => {
-    console.log(values);
+    try {
+      const response = await axios.post(`${conf.apiUrl}/users/login`, values);
+      const data = response.data;
+      toast.success(data.message);
+      dispatch(authLogin(data.data.loggedInUser));
+      navigate("/profile");
+    } catch (error) {
+      const errorMsg = handleError(error.response.data);
+      toast.error(errorMsg);
+      throw error;
+    }
   };
 
   return (
@@ -30,11 +56,11 @@ function Login() {
       <form onSubmit={handleSubmit(login)}>
         <div className="w-full mb-3">
           <Input
-            label="Username"
-            placeholder="Enter your username"
+            label="Username or Email"
+            placeholder="Enter your username or email"
             className="pr-10"
-            {...register("username", {
-              required: "Username is required.",
+            {...register("emailorusername", {
+              required: "Username or email is required.",
             })}
           />
           {errors.username && (
@@ -43,18 +69,7 @@ function Login() {
             </span>
           )}
         </div>
-        <div className="w-full mb-3">
-          <Input
-            label="Email"
-            placeholder="Enter your email address"
-            {...register("email", { required: "Email is required." })}
-          />
-          {errors.email && (
-            <span className=" text-red-500 text-sm">
-              {errors.email.message}
-            </span>
-          )}
-        </div>
+
         <div className="w-full mb-3">
           <label className=" font-medium text-gray-500">Password</label>
           <div className="w-full mb-3 flex items-center justify-between pr-2 border text-gray-500 border-gray-300 hover:border-gray-400 rounded-md">
