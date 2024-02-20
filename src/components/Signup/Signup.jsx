@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Input, Button } from "../index.js";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
+
 function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -15,8 +16,9 @@ function Signup() {
   const password = React.useRef({});
   password.current = watch("password", "");
 
-  const create = (values) => {
-    console.log(values);
+  const create = async (values) => {
+    try {
+    } catch (error) {}
   };
 
   return (
@@ -54,7 +56,7 @@ function Signup() {
             label="Phone Number"
             type="tel"
             placeholder="Enter your phone number"
-            {...register("phoneNo", {
+            {...register("phone", {
               required: true,
               pattern: /^\d{10}$/,
             })}

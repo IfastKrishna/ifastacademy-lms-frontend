@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function SignUp() {
   return (
     <div className="w-full h-screen pt-20">
-      <div className="max-w-xl mx-auto rounded-md shadow-md">
+      <div className="bg-white max-w-xl mx-auto rounded-md py-5 shadow-md">
         <div className="text-center">
           <Logo />
           <h2 className="text-2xl font-bold text-gray-800">

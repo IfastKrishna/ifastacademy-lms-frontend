@@ -8,6 +8,7 @@ import { login as authLogin } from "../../features/authSlice";
 import { conf } from "../../conf/conf";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { handleError } from "../../utils/handleAxiosError";
 
 function Login() {
   const [loading, setLoading] = useState(false);
@@ -23,18 +24,6 @@ function Login() {
 
   const togglePasswordShow = () => {
     setPasswordShow(!passwordShow);
-  };
-
-  const handleError = (errorData) => {
-    const preContentRegex = /<pre>(.*?)<br>/s;
-    const match = errorData.match(preContentRegex);
-    if (match && match.length > 1) {
-      const preContent = match[1];
-      return preContent.trim().split(":")[1];
-    } else {
-      console.log("No <pre> tag content found");
-      return "";
-    }
   };
 
   const login = async (values) => {

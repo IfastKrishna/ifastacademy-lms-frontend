@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import Logo from "../Logo";
 import { FaUser, FaChalkboardTeacher } from "react-icons/fa";
 import { Outlet } from "react-router-dom";
+import { IoLogOut } from "react-icons/io5";
 import {
   MdSpaceDashboard,
   MdKeyboardArrowDown,
@@ -11,29 +12,42 @@ import {
   MdOutlineMenu,
   MdOutlineClose,
 } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import Menu from "./Menu";
 import MenuWrapper from "./MenuWrapper";
 import SubMenu from "./SubMenu";
 import FlexBtween from "../FlexBetween/FlexBtween";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../features/authSlice.js";
 
 function SideBar() {
-  const isSmallDivise = useMediaQuery({ query: "(max-width:1024px)" });
+  const isSmallDevice = useMediaQuery({ query: "(max-width:1024px)" });
   const [sideBarOpen, setSideBarOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const authStatus = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isSmallDivise) {
+    if (!isSmallDevice) {
       setSideBarOpen(true);
     } else {
       setSideBarOpen(false);
     }
-  }, [isSmallDivise]);
+  }, [isSmallDevice]);
 
-  const handlerToggleSideBar = () => {
+  const handleToggleSideBar = () => {
     setSideBarOpen(!sideBarOpen);
+  };
+
+  const handleToggleProfileDropdown = () => {
+    setProfileDropdownOpen(!profileDropdownOpen);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
   };
 
   return (
@@ -52,10 +66,10 @@ function SideBar() {
               <Logo />
             </Link>
 
-            {isSmallDivise ? (
+            {isSmallDevice ? (
               <MdOutlineClose
                 fontSize={32}
-                onClick={handlerToggleSideBar}
+                onClick={handleToggleSideBar}
                 className=" cursor-pointer"
               />
             ) : null}
@@ -96,17 +110,40 @@ function SideBar() {
               </SubMenu>
             </MenuWrapper>
           </div>
+          {authStatus === true && !isSmallDevice ? (
+            <div className="flex items-center absolute bottom-5 left-9">
+              <img
+                src={user?.avatar}
+                className="w-10 h-10 rounded-full object-cover border-2 border-gray-300"
+                alt="Profile"
+              />
+
+              <button
+                onClick={handleLogout}
+                className="flex items-center text-xl px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md w-full text-left"
+              >
+                <IoLogOut className="mr-2" /> Logout
+              </button>
+            </div>
+          ) : !isSmallDevice ? (
+            <Link
+              to="/login"
+              className=" bg-black/10 py-2 px-4 rounded-md font-bold duration-200 hover:shadow hover:bg-black/30  hover:text-gray-700"
+            >
+              Login
+            </Link>
+          ) : null}
         </section>
       </div>
 
-      {/* MOBILE DIVISE FOR NAVBAR */}
+      {/* MOBILE DEVICE FOR NAVBAR */}
       <div className="block fixed z-10 top-0 left-0 right-0 lg:hidden h-14 px-5 bg-white border-b border-gray-200 w-full">
         <FlexBtween className="h-full px-5">
           <div className="flex items-center">
             <MdOutlineMenu
               fontSize={30}
               className="mr-3 cursor-pointer"
-              onClick={handlerToggleSideBar}
+              onClick={handleToggleSideBar}
             />
             <Link to="">
               <Logo />
@@ -114,10 +151,36 @@ function SideBar() {
           </div>
 
           {authStatus ? (
-            <img
-              src={user.avatar}
-              className=" w-10 h-10 rounded-full object-cover border-2 border-gray-300 hover:cursor-pointer"
-            />
+            <div
+              className="relative flex items-center cursor-pointer"
+              onClick={handleToggleProfileDropdown}
+            >
+              <img
+                src={user?.avatar}
+                className="w-8 h-8 rounded-full object-cover border-2 border-gray-300"
+                alt="Profile"
+              />
+              {profileDropdownOpen && (
+                <div className="absolute right-0 top-8 mt-2 py-2 w-48 bg-white border border-gray-100 rounded-md shadow-xl z-10">
+                  <NavLink
+                    to="/profile"
+                    className={({ isActive }) =>
+                      `flex items-center px-4 py-2 text-gray-800 ${
+                        isActive ? "bg-gray-200" : null
+                      } hover:bg-gray-200`
+                    }
+                  >
+                    <FaUser className="mr-3" /> Profile
+                  </NavLink>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"
+                  >
+                    <IoLogOut className="mr-2" /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <Link
               to="/login"
@@ -129,16 +192,13 @@ function SideBar() {
         </FlexBtween>
       </div>
 
-      {/* Page */}
-      {/* <div className="flex-1"> */}
       <div
         className={`flex-1 bg-gray-100 ${
-          isSmallDivise ? "overflow-x-hidden" : "h-screen"
+          isSmallDevice ? "overflow-x-hidden" : "h-screen"
         } overflow-auto`}
       >
         <Outlet />
       </div>
-      {/* </div> */}
     </div>
   );
 }

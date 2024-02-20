@@ -8,6 +8,7 @@ import Input from "./Input/Input";
 import Textarea from "./Textarea/Textarea";
 import Select from "./Select/Select";
 import Logo from "./Logo";
+import ModelBox from "./ModelBox/ModelBox";
 import Spinner from "./Sppiner/Sppiner";
 import Protected from "./Protact/Protected";
 
@@ -24,4 +25,5 @@ export {
   Logo,
   Spinner,
   Protected,
+  ModelBox,
 };
