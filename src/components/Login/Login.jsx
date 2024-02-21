@@ -9,6 +9,7 @@ import { conf } from "../../conf/conf";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { handleError } from "../../utils/handleAxiosError";
+import Axios from "../../utils/BaseUrl";
 
 function Login() {
   const [loading, setLoading] = useState(false);
@@ -28,15 +29,16 @@ function Login() {
 
   const login = async (values) => {
     try {
-      const response = await axios.post(`${conf.apiUrl}/users/login`, values);
+      setLoading(true);
+      const response = await Axios.post("/users/login", values);
       const data = response.data;
       toast.success(data.message);
-      dispatch(authLogin(data.data.loggedInUser));
+      dispatch(authLogin(data.data));
       navigate("/profile");
+      setLoading(false);
     } catch (error) {
-      const errorMsg = handleError(error.response.data);
-      toast.error(errorMsg);
-      throw error;
+      toast.error(handleError(error.response.data));
+      setLoading(false);
     }
   };
 
@@ -90,8 +92,8 @@ function Login() {
         </div>
 
         <div className="w-full mb-3">
-          <Button type="submit" className="w-full">
-            {loading ? <Spinner /> : "Login"}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? " loging..." : "Login"}
           </Button>
         </div>
       </form>

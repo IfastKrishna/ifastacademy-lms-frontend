@@ -23,7 +23,7 @@ function Protected({ children }) {
     checkAuthentication();
   }, [isAuthenticated, navigate]);
 
-  return isLoading ? <p>Loading...</p> : <>{children}</>;
+  return isLoading ? null : <>{children}</>;
 }
 
 export default Protected;

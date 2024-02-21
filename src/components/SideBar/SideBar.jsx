@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useMediaQuery } from "react-responsive";
 import Logo from "../Logo";
 import { FaUser, FaChalkboardTeacher } from "react-icons/fa";
@@ -19,17 +19,20 @@ import SubMenu from "./SubMenu";
 import FlexBtween from "../FlexBetween/FlexBtween";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../features/authSlice.js";
+import toast from "react-hot-toast";
+import Axios from "../../utils/BaseUrl.js";
 
 function SideBar() {
   const isSmallDevice = useMediaQuery({ query: "(max-width:1024px)" });
   const [sideBarOpen, setSideBarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const authStatus = useSelector((state) => state.auth.isAuthenticated);
-  const user = useSelector((state) => state.auth.user);
+  const { isAuthenticated: authStatus, user } = useSelector(
+    (state) => state.auth
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useMemo(() => {
     if (!isSmallDevice) {
       setSideBarOpen(true);
     } else {
@@ -45,9 +48,15 @@ function SideBar() {
     setProfileDropdownOpen(!profileDropdownOpen);
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      const res = await Axios.post("/users/logout");
+      dispatch(logout());
+      toast.success(res.data.message);
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (

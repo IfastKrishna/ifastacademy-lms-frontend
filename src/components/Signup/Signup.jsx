@@ -1,24 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input, Button } from "../index.js";
 import { useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
+import { handleError } from "../../utils/handleAxiosError";
+import { conf } from "../../conf/conf.js";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 function Signup() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm();
   const password = React.useRef({});
   password.current = watch("password", "");
 
   const create = async (values) => {
     try {
-    } catch (error) {}
+      setLoading(true);
+      const response = await axios.post(
+        `${conf.apiUrl}/users/register`,
+        values
+      );
+      const data = response.data;
+      toast.success(data.message);
+      navigate("/login");
+      setLoading(false);
+    } catch (error) {
+      toast.error(handleError(error.response.data));
+      throw error;
+    }
   };
 
   return (
@@ -91,7 +107,11 @@ function Signup() {
             <span className="text-red-500">{errors.confpassword.message}</span>
           )}
         </div>
-        <Button type="submit" className="w-full disabled:cursor-not-allowed">
+        <Button
+          type="submit"
+          className="w-full disabled:cursor-not-allowed"
+          disabled={loading}
+        >
           Create Account
         </Button>
       </form>
