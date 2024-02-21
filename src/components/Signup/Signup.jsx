@@ -3,14 +3,12 @@ import { useForm } from "react-hook-form";
 import { Input, Button } from "../index.js";
 import { useNavigate } from "react-router";
 import { handleError } from "../../utils/handleAxiosError";
-import { conf } from "../../conf/conf.js";
-import axios from "axios";
 import toast from "react-hot-toast";
+import Axios from "../../utils/BaseUrl.js";
 
 function Signup() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -23,17 +21,12 @@ function Signup() {
   const create = async (values) => {
     try {
       setLoading(true);
-      const response = await axios.post(
-        `${conf.apiUrl}/users/register`,
-        values
-      );
-      const data = response.data;
-      toast.success(data.message);
-      navigate("/login");
+      const response = await Axios.post("/users/register", values);
+      toast.success(response.data.message);
       setLoading(false);
+      navigate("/login");
     } catch (error) {
       toast.error(handleError(error.response.data));
-      throw error;
     }
   };
 
