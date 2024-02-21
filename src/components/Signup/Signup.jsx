@@ -23,10 +23,11 @@ function Signup() {
       setLoading(true);
       const response = await Axios.post("/users/register", values);
       toast.success(response.data.message);
-      setLoading(false);
       navigate("/login");
+      setLoading(false);
     } catch (error) {
       toast.error(handleError(error.response.data));
+      setLoading(false);
     }
   };
 
